@@ -1,0 +1,121 @@
+
+@extends('dashboard.layouts.layout')
+
+@section('content')
+    <!-- Breadcrumb -->
+    <ol class="breadcrumb" style="margin-top: 5%; padding-right: 16%">
+        <li class="breadcrumb-item">{{__('words.dashboard')}}</li>
+        <li class="breadcrumb-item"><a href="#">{{ __('words.destinations') }}</a>
+        </li>
+    </ol>
+
+    <div class="container-fluid" style="margin-right: 15%">
+
+        <div class="animated fadeIn">
+            <form action="{{ Route('destination.update' , $destination) }}" method="post" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div class="row">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <div class="card">
+                        <div class="card-header">
+                            <strong>{{ __('words.edit_destination') }}</strong>
+                        </div>
+                        <div class="card-block">
+
+
+
+                            <img src="{{asset($destination->image)}}" alt="" height="50px;">
+
+                            <div class="form-group col-md-12">
+                                <label>{{ __('words.image') }}</label>
+                                <input type="file" name="image" class="form-control" placeholder="{{ __('words.image') }}"
+                                   >
+                            </div>
+
+
+                          
+                            <div class="form-group col-md-12">
+                                <label>{{ __('words.continent') }}</label>
+                                <select name="parent_id" id="" class="form-control">
+                                    <option value="0"  @if ($destination->parent_id == 0 || $destination->parent_id == null)
+                                        selected
+                                    @endif>{{ $destination->title }} </option>
+                                    @foreach ($destinations as $item)
+                                    @if ($item->id != $destination->id)
+                                        
+                                  
+                                    <option @if ($destination->parent_id ==  $item->id)
+                                        selected
+                                    @endif value="{{$item->id}}">{{$item->title}}</option>
+                                    @endif
+                                    @endforeach
+                                </select>
+                               
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <strong>{{ __('words.translations') }}</strong>
+                            </div>
+                            <div class="card-block">
+                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+
+                                    @foreach (config('app.languages') as $key => $lang)
+                                        <li class="nav-item">
+                                            <a class="nav-link @if ($loop->index == 0) active @endif"
+                                                id="home-tab" data-toggle="tab" href="#{{ $key }}" role="tab"
+                                                aria-controls="home" aria-selected="true">{{ $lang }}</a>
+                                        </li>
+                                    @endforeach
+
+                                </ul>
+                                <div class="tab-content" id="myTabContent">
+                                    @foreach (config('app.languages') as $key => $lang)
+                                        <div class="tab-pane mt-3 fade @if ($loop->index == 0) show active in @endif"
+                                            id="{{ $key }}" role="tabpanel" aria-labelledby="home-tab">
+                                            <br>
+                                            <div class="form-group mt-3 col-md-12">
+                                                <label>{{ __('words.title') }} - {{ $lang }}</label>
+                                                <input type="text" name="{{$key}}[title]" class="form-control"
+                                                    placeholder="{{ __('words.title') }}" value="{{$destination->translate($key)->title}}">
+                                            </div>
+
+                                            <div class="form-group col-md-12">
+                                                <label>{{ __('words.content') }}</label>
+                                                <textarea name="{{$key}}[content]" class="form-control" cols="30" rows="10">{{$destination->translate($key)->content}}</textarea>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                </div>
+
+
+
+                            </div>
+
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i>
+                                    {{ __('words.submit') }}</button>
+                                <button type="reset" class="btn btn-sm btn-danger"><i class="fa fa-ban"></i>
+                                    {{ __('words.reset') }}</button>
+                            </div>
+
+                        </div.
+
+
+                    </div>
+            </form>
+        </div>
+    </div>
+@endsection
